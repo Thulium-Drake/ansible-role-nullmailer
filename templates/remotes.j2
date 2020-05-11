@@ -1,0 +1,6 @@
+{% for relay in nullmailer_relays %}
+{{ relay.hostname }} {{ relay.proto -}}
+{% if relay.port is defined %} --port={{ relay.port }} {%- endif %}
+{%- if relay.crypt is not defined %} {%- elif relay.crypt == 'starttls' %} --starttls {%- elif relay.crypt == 'ssl' %} --ssl {% endif %}
+{%- if relay.user is defined %} --user={{ relay.user }} --pass={{ relay.password }} {%- endif %}
+{% endfor %}

@@ -1,0 +1,32 @@
+---
+- block:
+  - name: 'Install packages'
+    package:
+      name: 'nullmailer'
+      state: 'present'
+
+  - name: 'Enable service'
+    service:
+      name: 'nullmailer'
+      enabled: true
+
+  - name: 'Configure nullmailer'
+    template:
+      src: "{{ file.src }}"
+      dest: "{{ file.dest }}"
+    notify:
+      - 'restart nullmailer'
+    loop:
+      - { src: 'remotes.j2', dest: '/etc/nullmailer/remotes'}
+      - { src: 'adminaddr.j2', dest: '/etc/nullmailer/adminaddr'}
+      - { src: 'defaultdomain.j2', dest: '/etc/nullmailer/defaultdomain'}
+    loop_control:
+      loop_var: 'file'
+
+  - name: 'Configure alias for root'
+    lineinfile:
+      path: '/etc/aliases'
+      create: true
+      regexp: '^root:'
+      line: "root: {% for email in nullmailer_addrs -%}{{ email }}{{ '' if loop.last else ',' }} {% endfor %}"
+  when: not nullmailer_do_not_configure
