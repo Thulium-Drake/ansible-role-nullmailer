@@ -29,4 +29,9 @@
       create: true
       regexp: '^root:'
       line: "root: {% for email in nullmailer_addrs -%}{{ email }}{{ '' if loop.last else ',' }} {% endfor %}"
+
+  - name: 'Configure system mailname'
+    copy:
+      dest: '/etc/mailname'
+      content: "{{ ansible_facts['fqdn'] }}"
   when: not nullmailer_do_not_configure
