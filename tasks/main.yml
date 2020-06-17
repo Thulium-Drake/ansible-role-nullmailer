@@ -2,7 +2,9 @@
 - block:
   - name: 'Install packages'
     package:
-      name: 'nullmailer'
+      name:
+        - 'nullmailer'
+        - 'bsd-mailx'
       state: 'present'
 
   - name: 'Enable service'
