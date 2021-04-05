@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: Jeffrey van Pelt
+  author: thulium_drake
   description: Nullmailer, a tiny MTA configured by Ansible
   company:
   role_name: nullmailer
