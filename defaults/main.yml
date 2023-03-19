@@ -1,5 +1,7 @@
 ---
 # Set to true to prevent from running
+# This is used to allow including the role in a main playbook
+# and then exclude it for specific hosts that need 'special' mail setups
 nullmailer_do_not_configure: false
 
 # Remote mail relays to forward mail to
@@ -8,7 +10,7 @@ nullmailer_relays:
     proto: 'smtp'
     port: 25                      # Optional
     user: 'nullmailer'            # Optional
-    password: 'super_secr3t'      # Optioanl, remember to protect this!
+    password: 'super_secr3t'      # Optional, remember to protect this!
     crypt: 'starttls'             # Optional, options: starttls|ssl
 
 # Sender default domainname
@@ -18,3 +20,5 @@ nullmailer_default_domain: 'example.com'
 nullmailer_addrs:
   - 'alice@example.com'
   - 'bob@example.net'
+
+nullmailer_mailname: "{{ ansible_facts['fqdn'] }}"
