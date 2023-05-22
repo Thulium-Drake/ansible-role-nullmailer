@@ -1,49 +1,49 @@
 ---
-- when: not nullmailer_do_not_configure
-  name: 'Configure nullmailer when sure'
+- name: 'Configure nullmailer when sure'
+  when: not nullmailer_do_not_configure
   block:
-  - name: 'Install packages'
-    ansible.builtin.package:
-      name:
-        - 'nullmailer'
-        - 'bsd-mailx'
-      state: 'present'
+    - name: 'Install packages'
+      ansible.builtin.package:
+        name:
+          - 'nullmailer'
+          - 'bsd-mailx'
+        state: 'present'
 
-  - name: 'Enable service'
-    ansible.builtin.service:
-      name: 'nullmailer'
-      enabled: true
+    - name: 'Enable service'
+      ansible.builtin.service:
+        name: 'nullmailer'
+        enabled: true
 
-  - name: 'Configure nullmailer'
-    ansible.builtin.template:
-      src: "{{ file.src }}"
-      dest: "{{ file.dest }}"
-      owner: 'root'
-      group: 'root'
-      mode: '0644'
-    notify:
-      - 'restart nullmailer'
-    loop:
-      - {src: 'remotes.j2', dest: '/etc/nullmailer/remotes'}
-      - {src: 'adminaddr.j2', dest: '/etc/nullmailer/adminaddr'}
-      - {src: 'defaultdomain.j2', dest: '/etc/nullmailer/defaultdomain'}
-    loop_control:
-      loop_var: 'file'
+    - name: 'Configure nullmailer'
+      ansible.builtin.template:
+        src: "{{ file.src }}"
+        dest: "{{ file.dest }}"
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+      notify:
+        - 'Restart nullmailer'
+      loop:
+        - {src: 'remotes.j2', dest: '/etc/nullmailer/remotes'}
+        - {src: 'adminaddr.j2', dest: '/etc/nullmailer/adminaddr'}
+        - {src: 'defaultdomain.j2', dest: '/etc/nullmailer/defaultdomain'}
+      loop_control:
+        loop_var: 'file'
 
-  - name: 'Configure alias for root'
-    ansible.builtin.lineinfile:
-      path: '/etc/aliases'
-      create: true
-      regexp: '^root:'
-      line: "root: {% for email in nullmailer_addrs -%}{{ email }}{{ '' if loop.last else ',' }} {% endfor %}"
-      owner: 'root'
-      group: 'root'
-      mode: '0644'
+    - name: 'Configure alias for root'
+      ansible.builtin.lineinfile:
+        path: '/etc/aliases'
+        create: true
+        regexp: '^root:'
+        line: "root: {% for email in nullmailer_addrs -%}{{ email }}{{ '' if loop.last else ',' }} {% endfor %}"
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
 
-  - name: 'Configure system mailname'
-    ansible.builtin.copy:
-      dest: '/etc/mailname'
-      content: "{{ nullmailer_mailname }}"
-      owner: 'root'
-      group: 'root'
-      mode: '0644'
+    - name: 'Configure system mailname'
+      ansible.builtin.copy:
+        dest: '/etc/mailname'
+        content: "{{ nullmailer_mailname }}"
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
